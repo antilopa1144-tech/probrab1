@@ -980,6 +980,10 @@
       "title": "Электрика",
       "description": "Предварительная ведомость кабеля и материалов по площади; не заменяет электропроект"
     },
+    "engineering_warm_floor": {
+      "title": "Водяной тёплый пол",
+      "description": "Длина трубы по фактической раскладке или проверка проектной ведомости контуров и бухт"
+    },
     "engineering_heating": {
       "title": "Радиаторы отопления",
       "description": "Подбор секций или приборов по нагрузке помещения и паспортной теплоотдаче"
@@ -1995,6 +1999,9 @@
     "warmFloorLayoutArea": "Площадь раскладки, м²",
     "warmFloorInstalledPower": "Установленная мощность, Вт",
     "warmFloorCircuitCurrent": "Расчётный ток, А",
+    "waterFloorExactPipeLength": "Точная потребность, м",
+    "waterFloorPurchasePipeLength": "Трубы к покупке, м",
+    "waterFloorCircuitCount": "Контуров по ведомости",
     "anchorsNeeded": "Анкеров нужно",
     "angleLength": "Длина угла",
     "antisepticNeeded": "Антисептика нужно",
@@ -3715,6 +3722,12 @@
         "noElectricalDesign": "Приложение не подбирает питающий кабель, автомат, коммутацию, заземление и уравнивание потенциалов"
       }
     },
+    "water_floor": {
+      "projectBoundary": "Шаг трубы, число и предельную длину контуров берите из теплотехнического и гидравлического проекта либо документации системы",
+      "actualLayoutArea": "Введите фактическую площадь трасс: приложение не вычитает условный процент под мебель",
+      "noHydraulics": "Расчёт не проверяет теплоотдачу, температуру поверхности, потери давления, насос, балансировку или источник тепла",
+      "coilCutPlan": "Общее число бухт не доказывает, что все непрерывные контуры можно выкроить без соединений в конструкции пола"
+    },
     "foundation": {
       "gidroizolyatsiya_po_vsey_ploschadi": "Гидроизоляция по всей площади контакта с грунтом.",
       "uteplenie_naruzhnoe_epps_minimum": "Утепление наружное (ЭППС) минимум 100 мм.",
@@ -4534,6 +4547,29 @@
     "warm_floor.floorSensorCount": "Датчики пола по ведомости",
     "warm_floor.sensorConduitLengthM": "Защитная трубка датчика по ведомости",
     "warm_floor.sensorConduitStockLengthM": "Длина покупного отрезка трубки",
+    "waterFloor.calculationMode": "Исходные данные",
+    "waterFloor.calculationMode.hint": "Предварительный режим даёт только геометрическую оценку; для закупки используйте длины контуров из проекта",
+    "waterFloor.calculationMode.preliminary": "Предварительно по раскладке",
+    "waterFloor.calculationMode.project": "По ведомости проекта",
+    "waterFloor.layoutAreaM2": "Фактическая площадь раскладки",
+    "waterFloor.layoutAreaM2.hint": "Только участки, где реально проходит труба; мебель и отступы автоматически не вычитаются",
+    "waterFloor.pipeSpacingMm": "Шаг трубы из проекта",
+    "waterFloor.pipeSpacingMm.hint": "Калькулятор не выбирает шаг по типу помещения",
+    "waterFloor.connectionLengthM": "Подводки вне площади раскладки",
+    "waterFloor.connectionLengthM.hint": "Суммарная длина подающей и обратной трассы до границ контуров",
+    "waterFloor.projectTotalPipeLengthM": "Суммарная длина контуров по проекту",
+    "waterFloor.projectTotalPipeLengthM.hint": "Сложите длины всех непрерывных петель вместе с проектными подводками",
+    "waterFloor.circuitCount": "Количество контуров по проекту",
+    "waterFloor.circuitCount.hint": "0 — число и средняя длина контуров не проверяются",
+    "waterFloor.longestCircuitLengthM": "Самый длинный контур",
+    "waterFloor.longestCircuitLengthM.hint": "Возьмите фактическую длину самой длинной петли из ведомости",
+    "waterFloor.maxCircuitLengthM": "Предельная длина контура",
+    "waterFloor.maxCircuitLengthM.hint": "Предел из гидравлического проекта или документации системы; 0 — проверка отключена",
+    "waterFloor.coilLengthM": "Длина фактической бухты",
+    "waterFloor.coilLengthM.hint": "0 — результат в метрах; округление до бухт не заменяет план раскроя петель",
+    "waterFloor.collectorCount": "Коллекторы по ведомости",
+    "waterFloor.manifoldOutletCount": "Выходы коллекторов по ведомости",
+    "waterFloor.manifoldOutletCount.hint": "Суммарное число выходов всех введённых коллекторов",
     "ventilation.calculationMode": "Исходный расход воздуха",
     "ventilation.calculationMode.hint": "Жилой режим применим к помещениям с естественным проветриванием. Для других объектов используйте расход из проекта.",
     "ventilation.calculationMode.residential": "Предварительно для жилья",
@@ -5043,6 +5079,9 @@
     "warm_floor_product": "Паспорт выбранного комплекта",
     "warm_floor_electric": "Электрическая проверка",
     "warm_floor_purchase": "Закупка по ведомости",
+    "water_floor_source": "Исходные данные",
+    "water_floor_project": "Проверка контуров",
+    "water_floor_purchase": "Закупка по ведомости",
     "sheet": "Листы",
     "application": "Применение",
     "material": "Материал",
@@ -5602,7 +5641,7 @@
         "title": "Водостоки"
       },
       "engineering_warm_floor": {
-        "title": "Тёплый пол"
+        "title": "Водяной тёплый пол"
       },
       "engineering_electric": {
         "title": "Электрика"

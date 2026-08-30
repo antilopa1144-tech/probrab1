@@ -16,6 +16,7 @@ import 'unified_roofing_calculator_v2.dart';
 import 'stairs_calculator_v2.dart';
 import 'drywall_ceiling_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
+import 'warm_floor_pipes_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'room_calculator_v2.dart';
 // bathroom_tile_calculator_v2.dart удалён - дублирует floors_tile (tile_calculator_v2.dart)
@@ -102,6 +103,7 @@ class CalculatorRegistry {
 
     // Инженерные системы
     warmFloorCalculatorV2,
+    warmFloorPipesCalculatorV2,
 
     // Полы (дополнительные)
     parquetCalculatorV2,

@@ -733,6 +733,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'engineering_warm_floor',
             title: 'work.item.engineering_warm_floor.title',
             icon: Icons.waves_outlined,
+            calculatorId: 'engineering_warm_floor',
           ),
           WorkItemDefinition(
             id: 'engineering_electric',

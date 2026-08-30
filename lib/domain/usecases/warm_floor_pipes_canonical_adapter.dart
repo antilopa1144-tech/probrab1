@@ -1,291 +1,214 @@
-import 'dart:math' as math;
-
 import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<int, String> _pipeTypeLabels = {
-  0: 'сшитый полиэтилен PEX-a',
-  1: 'сшитый полиэтилен PEX-b',
-  2: 'термостойкий полиэтилен PE-RT',
-  3: 'Металлопластик',
-};
+double _read(
+  SpecReader spec,
+  Map<String, double> inputs,
+  String key,
+  double fallback,
+  double min,
+  double max,
+) =>
+    (inputs[key] ?? defaultFor(spec, key, fallback)).clamp(min, max).toDouble();
 
-Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
-      .round();
-  if (inputMode == 0) {
-    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(
-      1.0,
-      30.0,
-    );
-    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(
-      1.0,
-      30.0,
-    );
-    return {
-      'inputMode': 0.0,
-      'area': roundValue(length * width, 3),
-      'perimeter': roundValue(2 * (length + width), 3),
-      'length': length,
-      'width': width,
-    };
-  }
-  final area = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(
-    1.0,
-    300.0,
-  );
-  return {
-    'inputMode': 1.0,
-    'area': roundValue(area, 3),
-    'perimeter': roundValue(math.sqrt(area) * 4, 3),
-    'length': 0.0,
-    'width': 0.0,
-  };
-}
+int _readWhole(
+  SpecReader spec,
+  Map<String, double> inputs,
+  String key,
+  double fallback,
+  int min,
+  int max,
+) => (inputs[key] ?? defaultFor(spec, key, fallback)).round().clamp(min, max);
 
+/// Геометрическая оценка трубы или проверка готовой проектной ведомости.
+///
+/// Адаптер намеренно не назначает шаг, длину петли, запас, слои пола или
+/// гидравлику. Все проектные значения вводятся явно и совпадают с web v2.
 CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(warmFloorPipesSpecData);
-
-  final areaInfo = _resolveArea(spec, inputs);
-  final area = areaInfo['area']!;
-  final perimeter = areaInfo['perimeter']!;
-
-  final pipeStep = (inputs['pipeStep'] ?? defaultFor(spec, 'pipeStep', 200))
-      .clamp(100.0, 300.0);
-  final pipeType = (inputs['pipeType'] ?? defaultFor(spec, 'pipeType', 0))
-      .round()
-      .clamp(0, 3);
-  final zonedLayoutEnabled = (inputs['zonedLayoutEnabled'] ?? 0).round() == 1;
-  final windowZoneStepMm = spec
-      .materialRule<num>('window_zone_step_mm', 120)
-      .toDouble();
-  final centralZoneStepMm = spec
-      .materialRule<num>('central_zone_step_mm', 200)
-      .toDouble();
-  final windowZoneFraction =
-      (inputs['windowZoneFraction'] ??
-              spec.materialRule<num>('window_zone_fraction', 0.2))
-          .clamp(0.0, 0.5)
-          .toDouble();
-
-  /* ─── core formulas ─── */
-  final usefulArea = roundValue(
-    area * spec.materialRule<num>('furniture_reduction').toDouble(),
-    3,
+  final calculationMode = _readWhole(spec, inputs, 'calculationMode', 0, 0, 1);
+  final layoutAreaM2 = _read(spec, inputs, 'layoutAreaM2', 15, 0.1, 500);
+  final pipeSpacingMm = _read(spec, inputs, 'pipeSpacingMm', 150, 50, 500);
+  final connectionLengthM = _read(
+    spec,
+    inputs,
+    'connectionLengthM',
+    0,
+    0,
+    1000,
   );
-  final pipeStepM = zonedLayoutEnabled
-      ? roundValue(
-          usefulArea /
-              math.max(
-                1e-9,
-                usefulArea * windowZoneFraction / (windowZoneStepMm / 1000) +
-                    usefulArea *
-                        (1 - windowZoneFraction) /
-                        (centralZoneStepMm / 1000),
-              ),
-          4,
-        )
-      : pipeStep / 1000;
-  final pipeLength = zonedLayoutEnabled
-      ? roundValue(
-          usefulArea * windowZoneFraction / (windowZoneStepMm / 1000) +
-              usefulArea *
-                  (1 - windowZoneFraction) /
-                  (centralZoneStepMm / 1000) +
-              spec.materialRule<num>('collector_addition_m').toDouble(),
-          3,
-        )
-      : roundValue(
-          usefulArea / pipeStepM +
-              spec.materialRule<num>('collector_addition_m').toDouble(),
-          3,
-        );
-  final circuits = math.max(
-    1,
-    (pipeLength / spec.materialRule<num>('max_circuit_m').toDouble()).ceil(),
+  final projectTotalPipeLengthM = _read(
+    spec,
+    inputs,
+    'projectTotalPipeLengthM',
+    0,
+    0,
+    10000,
   );
-  final totalPipe = roundValue(
-    pipeLength * spec.materialRule<num>('pipe_reserve').toDouble(),
-    3,
+  final circuitCount = _readWhole(spec, inputs, 'circuitCount', 0, 0, 100);
+  final longestCircuitLengthM = _read(
+    spec,
+    inputs,
+    'longestCircuitLengthM',
+    0,
+    0,
+    1000,
   );
-  final coils = (totalPipe / spec.materialRule<num>('pipe_coil_m').toDouble())
-      .ceil();
+  final maxCircuitLengthM = _read(
+    spec,
+    inputs,
+    'maxCircuitLengthM',
+    0,
+    0,
+    1000,
+  );
+  final coilLengthM = _read(spec, inputs, 'coilLengthM', 0, 0, 5000);
+  final collectorCount = _readWhole(spec, inputs, 'collectorCount', 0, 0, 20);
+  final manifoldOutletCount = _readWhole(
+    spec,
+    inputs,
+    'manifoldOutletCount',
+    0,
+    0,
+    200,
+  );
 
-  /* ─── ancillary materials ─── */
-  final eppsSheets =
-      (area *
-              spec.materialRule<num>('epps_reserve').toDouble() /
-              spec.materialRule<num>('epps_sheet_m2').toDouble())
-          .ceil();
-  final damperTapeRolls =
-      (perimeter *
-              spec.materialRule<num>('damper_reserve').toDouble() /
-              spec.materialRule<num>('damper_tape_roll_m').toDouble())
-          .ceil();
-  final anchorTotal =
-      (totalPipe /
-              spec.materialRule<num>('anchor_step_m').toDouble() *
-              spec.materialRule<num>('anchor_reserve').toDouble())
-          .ceil();
-  final anchorPacks =
-      (anchorTotal / spec.materialRule<num>('anchor_pack').toDouble()).ceil();
-  final screedBags =
-      (area *
-              spec.materialRule<num>('screed_thickness_m').toDouble() *
-              spec.materialRule<num>('screed_density').toDouble() /
-              spec.materialRule<num>('screed_bag_kg').toDouble())
-          .ceil();
+  final fieldPipeLengthM = calculationMode == 0
+      ? layoutAreaM2 / (pipeSpacingMm / 1000)
+      : 0.0;
+  final exactPipeLengthM = calculationMode == 0
+      ? fieldPipeLengthM + connectionLengthM
+      : projectTotalPipeLengthM;
+  final requiredCoilCount = coilLengthM > 0 && exactPipeLengthM > 0
+      ? (exactPipeLengthM / coilLengthM).ceil()
+      : 0;
+  final purchasePipeLengthM = coilLengthM > 0
+      ? requiredCoilCount * coilLengthM
+      : exactPipeLengthM;
+  final leftoverPipeLengthM = purchasePipeLengthM - exactPipeLengthM;
+  final averageCircuitLengthM = circuitCount > 0
+      ? exactPipeLengthM / circuitCount
+      : 0.0;
 
-  /* ─── scenarios ─── */
-  final basePrimary = totalPipe;
-  final scenarios = <String, CanonicalScenarioResult>{};
-
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
-  for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      defaultFactorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
-    final packageSize = spec.materialRule<num>('pipe_coil_m').toDouble();
-    final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
-    final purchaseQuantity = roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'pipe-coil-${packageSize.toInt()}m';
-    scenarios[scenarioName] = CanonicalScenarioResult(
-      exactNeed: exactNeed,
-      purchaseQuantity: purchaseQuantity,
-      leftover: roundValue(purchaseQuantity - exactNeed, 6),
-      assumptions: [
-        'formula_version:${spec.formulaVersion}',
-        'pipeType:$pipeType',
-        'pipeStep:${pipeStep.toInt()}',
-        'packaging:$packageLabel',
-      ],
-      keyFactors: {
-        ...buildKeyFactors(
-          spec.enabledFactors,
-          defaultFactorTable,
-          scenarioName,
-        ),
-        'field_multiplier': roundValue(multiplier, 6),
-      },
-      buyPlan: CanonicalBuyPlan(
-        packageLabel: packageLabel,
-        packageSize: packageSize,
-        packagesCount: packageCount,
-        unit: spec.packagingRule<String>('unit'),
-      ),
-    );
-  }
-
-  final recScenario = scenarios['REC']!;
-
-  /* ─── materials list ─── */
-  final pipeTypeLabel =
-      _pipeTypeLabels[pipeType] ?? 'сшитого полиэтилена PEX-a';
+  final meterUnit = spec.packagingRule<String>('meter_unit');
+  final coilUnit = spec.packagingRule<String>('coil_unit');
+  final pieceUnit = spec.packagingRule<String>('piece_unit');
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name:
-          'Труба из $pipeTypeLabel (бухты ${spec.materialRule<num>('pipe_coil_m').toInt()} м)',
-      quantity: roundValue(totalPipe, 3),
-      unit: 'м',
-      withReserve: (coils * spec.materialRule<num>('pipe_coil_m').toDouble()),
-      purchaseQty: (coils * spec.materialRule<num>('pipe_coil_m').toDouble())
-          .toDouble(),
+      name: calculationMode == 0
+          ? 'Труба для водяного тёплого пола — предварительная геометрия'
+          : 'Труба для водяного тёплого пола по проектной ведомости',
+      quantity: roundValue(exactPipeLengthM, 6),
+      unit: meterUnit,
+      withReserve: roundValue(purchasePipeLengthM, 6),
+      purchaseQty: roundValue(purchasePipeLengthM, 6),
       category: 'Основное',
-      packageInfo: {
-        'count': coils,
-        'unitSize': spec.materialRule<num>('pipe_coil_m').toDouble(),
-        'packageUnit': 'бухт',
-      },
-    ),
-    CanonicalMaterialResult(
-      name: 'Экструдированный пенополистирол (ЭППС), листы 1200×600 мм',
-      quantity: eppsSheets.toDouble(),
-      unit: 'листов',
-      withReserve: eppsSheets.toDouble(),
-      purchaseQty: eppsSheets.toDouble(),
-      category: 'Утепление',
-    ),
-    CanonicalMaterialResult(
-      name: 'Демпферная лента (рулоны)',
-      quantity: damperTapeRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: damperTapeRolls.toDouble(),
-      purchaseQty: damperTapeRolls.toDouble(),
-      category: 'Подготовка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Якорные клипсы (упаковки по 100 шт)',
-      quantity: anchorTotal.toDouble(),
-      unit: 'шт',
-      withReserve:
-          (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()),
-      purchaseQty:
-          (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble())
-              .toDouble(),
-      category: 'Крепёж',
-      packageInfo: {
-        'count': anchorPacks,
-        'unitSize': spec.materialRule<num>('anchor_pack').toDouble(),
-        'packageUnit': 'упаковок',
-      },
-    ),
-    CanonicalMaterialResult(
-      name: 'Коллектор ($circuits контуров)',
-      quantity: 1,
-      unit: 'шт',
-      withReserve: 1,
-      purchaseQty: 1,
-      category: 'Управление',
-    ),
-    CanonicalMaterialResult(
-      name: 'Стяжка полусухая (мешки 25 кг)',
-      quantity: roundValue(
-        area *
-            spec.materialRule<num>('screed_thickness_m').toDouble() *
-            spec.materialRule<num>('screed_density').toDouble(),
-        3,
-      ),
-      unit: 'кг',
-      withReserve:
-          (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
-      purchaseQty:
-          (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble())
-              .toDouble(),
-      category: 'Основное',
-      packageInfo: {
-        'count': screedBags,
-        'unitSize': spec.materialRule<num>('screed_bag_kg').toDouble(),
-        'packageUnit': 'мешков',
-      },
+      packageInfo: coilLengthM > 0
+          ? {
+              'count': requiredCoilCount,
+              'size': roundValue(coilLengthM, 6),
+              'packageUnit': coilUnit,
+            }
+          : null,
     ),
   ];
 
-  /* ─── warnings ─── */
-  final warnings = <String>[];
-  if (pipeLength >
-      spec.warningRule<num>('multiple_circuits_pipe_threshold_m').toDouble()) {
-    warnings.add('Длина трубы более 80 м — рекомендуется несколько контуров');
-  }
-  if (area >
-      spec
-          .warningRule<num>('professional_heat_loss_area_threshold_m2')
-          .toDouble()) {
-    warnings.add(
-      'Площадь более 40 м² — рекомендуется профессиональный расчёт теплопотерь',
+  if (collectorCount > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: manifoldOutletCount > 0
+            ? 'Коллектор по проектной ведомости — всего $manifoldOutletCount выходов'
+            : 'Коллектор по проектной ведомости',
+        quantity: collectorCount.toDouble(),
+        unit: pieceUnit,
+        withReserve: collectorCount.toDouble(),
+        purchaseQty: collectorCount.toDouble(),
+        category: 'Управление',
+      ),
     );
   }
-  if (!zonedLayoutEnabled) {
+
+  final scenarios = <String, CanonicalScenarioResult>{};
+  for (final scenarioName in scenarioNames) {
+    scenarios[scenarioName] = CanonicalScenarioResult(
+      exactNeed: roundValue(exactPipeLengthM, 6),
+      purchaseQuantity: roundValue(purchasePipeLengthM, 6),
+      leftover: roundValue(leftoverPipeLengthM, 6),
+      assumptions: [
+        'formula_version:${spec.formulaVersion}',
+        'calculationMode:$calculationMode',
+        'no_hidden_reserve',
+        coilLengthM > 0 ? 'coil_length_from_user' : 'purchase_by_meter',
+      ],
+      keyFactors: const {'field_multiplier': 1},
+      buyPlan: CanonicalBuyPlan(
+        packageLabel: coilLengthM > 0
+            ? 'water-floor-pipe-coil'
+            : 'water-floor-pipe-meter',
+        packageSize: coilLengthM > 0 ? roundValue(coilLengthM, 6) : 1,
+        packagesCount: coilLengthM > 0
+            ? requiredCoilCount
+            : exactPipeLengthM.ceil(),
+        unit: coilLengthM > 0 ? coilUnit : meterUnit,
+      ),
+    );
+  }
+
+  final warnings = <String>[
+    'Калькулятор не назначает шаг трубы и не проверяет теплоотдачу, температуру поверхности, гидравлику, насос, балансировку или источник тепла.',
+    'ЭППС, демпферная лента, крепёж, арматура коллектора и стяжка не добавлены: состав конструкции пола и ведомость материалов берутся из проекта.',
+  ];
+  if (calculationMode == 0) {
     warnings.add(
-      'Раскладка трубы единым шагом — у окон будет холоднее, чем в центре. Включите zonedLayoutEnabled для тепловой завесы у окна (СП 60.13330.2020).',
+      'Предварительный режим оценивает геометрическую длину по фактической площади раскладки и шагу из проекта; повороты, краевые зоны и трассы учитывайте планом.',
+    );
+  } else if (projectTotalPipeLengthM <= 0) {
+    warnings.add(
+      'Введите суммарную длину всех контуров из проектной ведомости.',
+    );
+  }
+  if (circuitCount <= 0) {
+    warnings.add(
+      'Число контуров не введено — средняя и фактическая длина петель не проверяются.',
+    );
+  } else if (longestCircuitLengthM <= 0) {
+    warnings.add(
+      'Показана только средняя длина: для гидравлической проверки нужна длина самого длинного контура.',
+    );
+  }
+  if (maxCircuitLengthM > 0 && longestCircuitLengthM <= 0) {
+    warnings.add(
+      'Введён предельный размер контура, но не введена длина самой длинной петли.',
+    );
+  } else if (maxCircuitLengthM > 0 &&
+      longestCircuitLengthM > maxCircuitLengthM) {
+    warnings.add(
+      'Самый длинный контур превышает предел из проекта или документации выбранной системы.',
+    );
+  }
+  if (coilLengthM > 0) {
+    warnings.add(
+      'Округление по общей длине до бухт не проверяет план раскроя непрерывных контуров и отсутствие соединений в конструкции пола.',
+    );
+    if (longestCircuitLengthM > coilLengthM) {
+      warnings.add(
+        'Самый длинный контур больше одной выбранной бухты — такой комплект не обеспечивает непрерывную петлю.',
+      );
+    }
+  }
+  if (manifoldOutletCount > 0 && collectorCount <= 0) {
+    warnings.add('Выходы коллектора введены без количества самих коллекторов.');
+  }
+  if (circuitCount > 0 &&
+      manifoldOutletCount > 0 &&
+      manifoldOutletCount < circuitCount) {
+    warnings.add(
+      'Введённых выходов коллектора меньше числа контуров по ведомости.',
     );
   }
 
@@ -294,34 +217,29 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'inputMode': areaInfo['inputMode']!,
-      'area': area,
-      'perimeter': perimeter,
-      'length': areaInfo['length']!,
-      'width': areaInfo['width']!,
-      'pipeStep': pipeStep,
-      'pipeType': pipeType.toDouble(),
-      'zonedLayoutEnabled': zonedLayoutEnabled ? 1.0 : 0.0,
-      'windowZoneStepMm': zonedLayoutEnabled ? windowZoneStepMm : 0.0,
-      'centralZoneStepMm': zonedLayoutEnabled ? centralZoneStepMm : 0.0,
-      'windowZoneFraction': roundValue(windowZoneFraction, 3),
-      'usefulArea': usefulArea,
-      'pipeStepM': roundValue(pipeStepM, 4),
-      'pipeLength': roundValue(pipeLength, 3),
-      'circuits': circuits.toDouble(),
-      'totalPipe': totalPipe,
-      'coils': coils.toDouble(),
-      'eppsSheets': eppsSheets.toDouble(),
-      'damperTapeRolls': damperTapeRolls.toDouble(),
-      'anchorTotal': anchorTotal.toDouble(),
-      'anchorPacks': anchorPacks.toDouble(),
-      'screedBags': screedBags.toDouble(),
-      'minExactNeed': scenarios['MIN']!.exactNeed,
-      'recExactNeed': recScenario.exactNeed,
-      'maxExactNeed': scenarios['MAX']!.exactNeed,
-      'minPurchase': scenarios['MIN']!.purchaseQuantity,
-      'recPurchase': recScenario.purchaseQuantity,
-      'maxPurchase': scenarios['MAX']!.purchaseQuantity,
+      'calculationMode': calculationMode.toDouble(),
+      'layoutAreaM2': roundValue(layoutAreaM2, 3),
+      'pipeSpacingMm': roundValue(pipeSpacingMm, 3),
+      'fieldPipeLengthM': roundValue(fieldPipeLengthM, 3),
+      'connectionLengthM': roundValue(connectionLengthM, 3),
+      'projectTotalPipeLengthM': roundValue(projectTotalPipeLengthM, 3),
+      'exactPipeLengthM': roundValue(exactPipeLengthM, 3),
+      'circuitCount': circuitCount.toDouble(),
+      'averageCircuitLengthM': roundValue(averageCircuitLengthM, 3),
+      'longestCircuitLengthM': roundValue(longestCircuitLengthM, 3),
+      'maxCircuitLengthM': roundValue(maxCircuitLengthM, 3),
+      'coilLengthM': roundValue(coilLengthM, 3),
+      'requiredCoilCount': requiredCoilCount.toDouble(),
+      'purchasePipeLengthM': roundValue(purchasePipeLengthM, 3),
+      'leftoverPipeLengthM': roundValue(leftoverPipeLengthM, 3),
+      'collectorCount': collectorCount.toDouble(),
+      'manifoldOutletCount': manifoldOutletCount.toDouble(),
+      'minExactNeed': roundValue(exactPipeLengthM, 6),
+      'recExactNeed': roundValue(exactPipeLengthM, 6),
+      'maxExactNeed': roundValue(exactPipeLengthM, 6),
+      'minPurchase': roundValue(purchasePipeLengthM, 6),
+      'recPurchase': roundValue(purchasePipeLengthM, 6),
+      'maxPurchase': roundValue(purchasePipeLengthM, 6),
     },
     warnings: warnings,
     scenarios: scenarios,

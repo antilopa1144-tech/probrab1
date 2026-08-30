@@ -47,6 +47,7 @@ import '../usecases/facade_panels_v3_adapter.dart';
 import '../usecases/frame_house_canonical_adapter.dart';
 import '../usecases/heating_canonical_adapter.dart';
 import '../usecases/warm_floor_canonical_adapter.dart';
+import '../usecases/warm_floor_pipes_canonical_adapter.dart';
 import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/roofing_canonical_adapter.dart';
 import '../usecases/stairs_canonical_adapter.dart';
@@ -108,6 +109,9 @@ class CalculatorEngine {
       'floors_tile_grout': CalculateTileGrout(),
       'floors_warm': const CanonicalBridgeUseCase(
         calculateCanonicalWarmFloor,
+      ),
+      'engineering_warm_floor': const CanonicalBridgeUseCase(
+        calculateCanonicalWarmFloorPipes,
       ),
       'foundation_basement': const CanonicalBridgeUseCase(
         calculateCanonicalBasement,

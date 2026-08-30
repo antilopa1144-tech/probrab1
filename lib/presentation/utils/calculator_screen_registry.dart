@@ -129,6 +129,8 @@ class CalculatorScreenRegistry {
         ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Инженерия
+    'engineering_warm_floor': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
     'engineering_heating': (def, inputs) =>
         ProCalculatorScreen(definition: def, initialInputs: inputs),
     // engineering_electrics использует общий canonical-экран, чтобы реальный

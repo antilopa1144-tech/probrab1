@@ -1,77 +1,72 @@
 {
   "calculator_id": "warm-floor-pipes",
-  "formula_version": "warm-floor-pipes-canonical-v1",
-  "generated_at": "2026-08-19T07:37:48.181Z",
+  "formula_version": "warm-floor-pipes-canonical-v2",
+  "generated_at": "2026-08-30T04:32:14.993Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for warm-floor-pipes",
       "inputs": {
-        "inputMode": 0,
-        "length": 5,
-        "width": 4,
-        "area": 20,
-        "pipeStep": 200,
-        "pipeType": 0,
-        "zonedLayoutEnabled": 0,
-        "windowZoneFraction": 0.2
+        "calculationMode": 0,
+        "layoutAreaM2": 15,
+        "pipeSpacingMm": 150,
+        "connectionLengthM": 0,
+        "projectTotalPipeLengthM": 0,
+        "circuitCount": 0,
+        "longestCircuitLengthM": 0,
+        "maxCircuitLengthM": 0,
+        "coilLengthM": 0,
+        "collectorCount": 0,
+        "manifoldOutletCount": 0
       },
       "expected_totals": {
-        "inputMode": 0,
-        "area": 20,
-        "perimeter": 18,
-        "length": 5,
-        "width": 4,
-        "pipeStep": 200,
-        "pipeType": 0,
-        "zonedLayoutEnabled": 0,
-        "windowZoneStepMm": 0,
-        "centralZoneStepMm": 0,
-        "windowZoneFraction": 0.2,
-        "usefulArea": 17,
-        "pipeStepM": 0.2,
-        "pipeLength": 88,
-        "circuits": 2,
-        "totalPipe": 92.4,
-        "coils": 1,
-        "eppsSheets": 30,
-        "damperTapeRolls": 1,
-        "anchorTotal": 324,
-        "anchorPacks": 4,
-        "screedBags": 60,
-        "minExactNeed": 86.04288,
-        "recExactNeed": 97.944,
-        "maxExactNeed": 127.341984,
-        "minPurchase": 200,
-        "recPurchase": 200,
-        "maxPurchase": 200
+        "calculationMode": 0,
+        "layoutAreaM2": 15,
+        "pipeSpacingMm": 150,
+        "fieldPipeLengthM": 100,
+        "connectionLengthM": 0,
+        "projectTotalPipeLengthM": 0,
+        "exactPipeLengthM": 100,
+        "circuitCount": 0,
+        "averageCircuitLengthM": 0,
+        "longestCircuitLengthM": 0,
+        "maxCircuitLengthM": 0,
+        "coilLengthM": 0,
+        "requiredCoilCount": 0,
+        "purchasePipeLengthM": 100,
+        "leftoverPipeLengthM": 0,
+        "collectorCount": 0,
+        "manifoldOutletCount": 0,
+        "minExactNeed": 100,
+        "recExactNeed": 100,
+        "maxExactNeed": 100,
+        "minPurchase": 100,
+        "recPurchase": 100,
+        "maxPurchase": 100
       },
-      "expected_materials_count": 6,
+      "expected_materials_count": 1,
       "expected_material_names": [
-        "Труба из сшитый полиэтилен PEX-a (бухты 200 м)",
-        "Экструдированный пенополистирол (ЭППС), листы 1200×600 мм",
-        "Демпферная лента (рулоны)",
-        "Якорные клипсы (упаковки по 100 шт)",
-        "Коллектор (2 контуров)",
-        "Стяжка полусухая (мешки 25 кг)"
+        "Труба для водяного тёплого пола — предварительная геометрия"
       ],
-      "expected_warnings_count": 2,
+      "expected_warnings_count": 4,
       "expected_warnings": [
-        "Длина трубы более 80 м — рекомендуется несколько контуров",
-        "Раскладка трубы единым шагом — у окон будет холоднее, чем в центре. Включите zonedLayoutEnabled для тепловой завесы у окна (СП 60.13330.2020)."
+        "Калькулятор не назначает шаг трубы и не проверяет теплоотдачу, температуру поверхности, гидравлику, насос, балансировку или источник тепла.",
+        "ЭППС, демпферная лента, крепёж, арматура коллектора и стяжка не добавлены: состав конструкции пола и ведомость материалов берутся из проекта.",
+        "Предварительный режим оценивает геометрическую длину по фактической площади раскладки и шагу из проекта; повороты, краевые зоны и трассы учитывайте планом.",
+        "Число контуров не введено — средняя и фактическая длина петель не проверяются."
       ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 86.04288,
-          "purchase_quantity": 200
+          "exact_need": 100,
+          "purchase_quantity": 100
         },
         "REC": {
-          "exact_need": 97.944,
-          "purchase_quantity": 200
+          "exact_need": 100,
+          "purchase_quantity": 100
         },
         "MAX": {
-          "exact_need": 127.341984,
-          "purchase_quantity": 200
+          "exact_need": 100,
+          "purchase_quantity": 100
         }
       }
     }
