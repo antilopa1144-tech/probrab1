@@ -18,7 +18,7 @@
         "formulaVersion": "paint-canonical-v2",
         "materials": {
           "paintCans": 2,
-          "primerCans": 1,
+          "primerCans": 0,
           "tapeRolls": 2,
           "rollers": 1,
           "brushes": 1,
@@ -49,13 +49,13 @@
         "formulaVersion": "paint-canonical-v2",
         "materials": {
           "paintCans": 1,
-          "primerCans": 1,
+          "primerCans": 0,
           "tapeRolls": 2,
           "rollers": 1,
           "brushes": 1,
           "trays": 1
         },
-        "warningsCount": 2,
+        "warningsCount": 1,
         "recScenario": {
           "packageSize": 10,
           "exactNeed": 4.55,

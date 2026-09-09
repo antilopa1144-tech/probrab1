@@ -187,6 +187,8 @@ class CalculatorScreenRegistry {
     'drainage': (_, _) => const DrainageCalculatorScreen(),
     'greenhouse': (_, _) => const GreenhouseCalculatorScreen(),
     'paving_tiles': (_, _) => const PavingTilesCalculatorScreen(),
+    'sewage': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
     'septic_rings': (_, _) => const SepticRingsCalculatorScreen(),
   };
 

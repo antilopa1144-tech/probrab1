@@ -6163,7 +6163,7 @@ const Map<String, dynamic> paintSpecData = {
       'key': 'area',
       'unit': 'm2',
       'default_value': 40,
-      'min': 0,
+      'min': 1,
       'max': 1000,
     },
     {
@@ -6492,11 +6492,11 @@ const Map<String, dynamic> paintSpecData = {
       'label': 'Грунтовка глубокого проникновения (10 л)',
       'category': 'Подготовка',
       'unit': 'л',
-      'rationale': 'Грунтование основания перед окраской. Не нужна для ранее окрашенных поверхностей.',
-      'skip_when': {
+      'rationale': 'Грунтование новой необработанной поверхности перед окраской.',
+      'only_when': {
         'type': 'input_eq',
         'input_key': 'surfacePrep',
-        'value': 2,
+        'value': 1,
       },
       'formula': {
         'type': 'area_consumption',
@@ -8837,115 +8837,172 @@ const Map<String, dynamic> septicRingsSpecData = {
 /// Generated from sewage-canonical.v1.json
 const Map<String, dynamic> sewageSpecData = {
   'calculator_id': 'sewage',
-  'formula_version': 'sewage-canonical-v1',
+  'formula_version': 'sewage-canonical-v2',
   'input_schema': [
     {
-      'key': 'residents',
-      'default_value': 4,
-      'min': 1,
-      'max': 20,
-    },
-    {
-      'key': 'septikType',
+      'key': 'calculationMode',
       'default_value': 0,
       'min': 0,
-      'max': 2,
+      'max': 1,
     },
     {
-      'key': 'chambersCount',
-      'default_value': 2,
+      'key': 'equivalentResidents',
+      'default_value': 4,
       'min': 1,
+      'max': 100,
+    },
+    {
+      'key': 'wastewaterPerResidentL',
+      'unit': 'l_per_day',
+      'default_value': 200,
+      'min': 1,
+      'max': 2000,
+    },
+    {
+      'key': 'projectDailyFlowM3',
+      'unit': 'm3_per_day',
+      'default_value': 0.8,
+      'min': 0.001,
+      'max': 100,
+    },
+    {
+      'key': 'selectedWorkingVolumeM3',
+      'unit': 'm3',
+      'default_value': 0,
+      'min': 0,
+      'max': 1000,
+    },
+    {
+      'key': 'selectedChamberCount',
+      'unit': 'pcs',
+      'default_value': 0,
+      'min': 0,
       'max': 3,
     },
     {
-      'key': 'pipeLength',
-      'unit': 'm',
-      'default_value': 10,
-      'min': 1,
-      'max': 50,
-    },
-    {
-      'key': 'groundType',
+      'key': 'naturalTreatmentStatus',
       'default_value': 0,
       'min': 0,
       'max': 2,
     },
+    {
+      'key': 'groundwaterStatus',
+      'default_value': 0,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'pipeLengthM',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 1000,
+    },
+    {
+      'key': 'pipeSectionLengthM',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'inspectionWellCount',
+      'unit': 'pcs',
+      'default_value': 0,
+      'min': 0,
+      'max': 100,
+    },
+    {
+      'key': 'fittingCount',
+      'unit': 'pcs',
+      'default_value': 0,
+      'min': 0,
+      'max': 1000,
+    },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
-    'septik_types': [
+    'retention_rules': [
       {
-        'id': 0,
-        'key': 'concrete_rings',
-        'label': 'Бетонные кольца',
+        'max_equivalent_residents': 25,
+        'daily_flow_multiplier': 3,
       },
       {
-        'id': 1,
-        'key': 'plastic',
-        'label': 'Пластиковый септик',
-      },
-      {
-        'id': 2,
-        'key': 'eurocubes',
-        'label': 'Еврокубы',
+        'max_equivalent_residents': 100,
+        'daily_flow_multiplier': 2.5,
       },
     ],
-    'ground_types': [
+    'chamber_rules': [
       {
-        'id': 0,
-        'key': 'sand',
-        'label': 'Песок',
-        'gravel_m3': 0,
+        'max_equivalent_residents': 5,
+        'minimum_chambers': 1,
       },
       {
-        'id': 1,
-        'key': 'loam',
-        'label': 'Суглинок',
-        'gravel_m3': 2,
+        'max_equivalent_residents': 50,
+        'minimum_chambers': 2,
       },
       {
-        'id': 2,
-        'key': 'clay',
-        'label': 'Глина',
-        'gravel_m3': 4,
+        'max_equivalent_residents': 100,
+        'minimum_chambers': 3,
       },
     ],
   },
   'packaging_rules': {
-    'unit': 'шт',
-    'package_size': 1,
-  },
-  'material_rules': {
-    'liters_per_person_per_day': 200,
-    'reserve_days': 3,
-    'ring_volume_m3': 0.71,
-    'eurocube_usable_m3': 0.8,
-    'pipe_section_m': 3,
-    'pipe_reserve': 1.05,
-    'default_elbows': 3,
-    'default_tees': 2,
-    'gravel_by_ground': {
-      '0': 0,
-      '1': 2,
-      '2': 4,
-    },
-    'geotextile_factor': 2,
-    'sand_backfill_factor': 0.5,
-  },
-  'warnings_rules': {
-    'bio_treatment_residents_threshold': 10,
+    'volume_unit': 'м³',
+    'meter_unit': 'м',
+    'piece_unit': 'шт',
+    'system_unit': 'компл.',
+    'pipe_section_unit': 'отрезк.',
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'MIN': 'Минимальный рабочий объём по введённому суточному притоку без скрытого запаса',
+    'REC': 'Совпадает с MIN: дополнительный объём задаётся проектом или паспортом системы',
+    'MAX': 'Совпадает с MIN: калькулятор не увеличивает сооружение универсальным коэффициентом',
+    'purchase_quantity': 'Не является готовой покупкой: сравнивается с явно введённым рабочим объёмом выбранной системы',
   },
+  'evidence': {
+    'reviewed_at': '2026-08-30',
+    'standards': [
+      {
+        'code': 'СП 32.13330.2018 (с изменениями 1–5)',
+        'scope': 'Автономные системы очистки, минимальный расчётный объём септика, число камер и необходимость последующей очистки',
+        'source': 'https://protect.gost.ru/sp/details/cf3b6ea5-c63b-4aa4-9dd3-4295fcaef945',
+      },
+      {
+        'code': 'СП 30.13330.2020 (с изменениями 1–5)',
+        'scope': 'Расчётные расходы внутреннего водоснабжения и водоотведения; фактический суточный приток должен быть подтверждён проектом',
+        'source': 'https://protect.gost.ru/sp/details/8cd57a35-8503-4bb8-802a-324b64f3e0e7',
+      },
+      {
+        'code': 'СанПиН 2.1.3684-21',
+        'scope': 'Санитарно-эпидемиологические требования к территориям, почвам, водным объектам и питьевому водоснабжению',
+        'source': 'https://publication.pravo.gov.ru/Document/View/0001202102050027',
+      },
+    ],
+    'project_assumptions': [
+      'input_schema.wastewaterPerResidentL',
+      'input_schema.projectDailyFlowM3',
+      'input_schema.selectedWorkingVolumeM3',
+      'input_schema.selectedChamberCount',
+      'input_schema.naturalTreatmentStatus',
+      'input_schema.groundwaterStatus',
+      'input_schema.pipeLengthM',
+      'input_schema.pipeSectionLengthM',
+      'input_schema.inspectionWellCount',
+      'input_schema.fittingCount',
+    ],
+  },
+  'assumption_notes': [
+    'Предварительный режим умножает эквивалентное число жителей на явно введённый пользователем суточный объём стоков; 200 л/сут — стартовое значение формы, а не универсальная норма для любого дома.',
+    'Минимальный рабочий объём принимается не менее трёхкратного суточного притока до 25 ЭЧЖ и 2,5-кратного свыше 25 до 100 ЭЧЖ.',
+    'Септик выполняет предварительную механическую очистку; обработанный сток требует последующей очистки по обоснованной проектной схеме.',
+    'Грунт и уровень грунтовых вод не переводятся в условные кубометры щебня или геотекстиля: пригодность естественных методов подтверждают изыскания и проект.',
+    'Калькулятор не назначает тип, конструкцию, кольца, днища, люки, обсыпку, якорение, уклон, отметки, санитарные разрывы или способ сброса.',
+  ],
 };
-
 /// Generated from siding-canonical.v1.json
 const Map<String, dynamic> sidingSpecData = {
   'calculator_id': 'siding',

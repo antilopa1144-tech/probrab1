@@ -48,6 +48,7 @@ import '../usecases/frame_house_canonical_adapter.dart';
 import '../usecases/heating_canonical_adapter.dart';
 import '../usecases/warm_floor_canonical_adapter.dart';
 import '../usecases/warm_floor_pipes_canonical_adapter.dart';
+import '../usecases/sewage_canonical_adapter.dart';
 import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/roofing_canonical_adapter.dart';
 import '../usecases/stairs_canonical_adapter.dart';
@@ -107,12 +108,11 @@ class CalculatorEngine {
       'floors_self_leveling': CalculateSelfLevelingFloor(),
       'floors_tile': CalculateTile(),
       'floors_tile_grout': CalculateTileGrout(),
-      'floors_warm': const CanonicalBridgeUseCase(
-        calculateCanonicalWarmFloor,
-      ),
+      'floors_warm': const CanonicalBridgeUseCase(calculateCanonicalWarmFloor),
       'engineering_warm_floor': const CanonicalBridgeUseCase(
         calculateCanonicalWarmFloorPipes,
       ),
+      'sewage': const CanonicalBridgeUseCase(calculateCanonicalSewage),
       'foundation_basement': const CanonicalBridgeUseCase(
         calculateCanonicalBasement,
       ),
@@ -121,9 +121,7 @@ class CalculatorEngine {
       'foundation_strip': const CanonicalBridgeUseCase(
         calculateCanonicalStripFoundation,
       ),
-      'frame_house': const CanonicalBridgeUseCase(
-        calculateCanonicalFrameHouse,
-      ),
+      'frame_house': const CanonicalBridgeUseCase(calculateCanonicalFrameHouse),
       'gypsum_board': CalculateGypsumV2(),
       'mixes_plaster': CalculatePlaster(),
       'mixes_primer': CalculatePrimer(),

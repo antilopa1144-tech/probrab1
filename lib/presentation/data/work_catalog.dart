@@ -621,6 +621,12 @@ const List<WorkAreaDefinition> _houseAreas = [
         icon: Icons.plumbing,
         items: [
           WorkItemDefinition(
+            id: 'sewage',
+            title: 'work.item.sewage.title',
+            icon: Icons.water_drop_outlined,
+            calculatorId: 'sewage',
+          ),
+          WorkItemDefinition(
             id: 'septic_rings',
             title: 'work.item.septic_rings.title',
             icon: Icons.water,

@@ -1235,6 +1235,10 @@
       "title": "Тротуарная плитка",
       "description": "Брусчатка, подушка, бордюр и пескоцемент"
     },
+    "sewage": {
+      "title": "Септик",
+      "description": "Минимальный рабочий объём и проверка проектных исходных данных"
+    },
     "septic_rings": {
       "title": "Септик из колец",
       "description": "Железобетонные кольца, трубы и гидроизоляция"
@@ -2002,6 +2006,9 @@
     "waterFloorExactPipeLength": "Точная потребность, м",
     "waterFloorPurchasePipeLength": "Трубы к покупке, м",
     "waterFloorCircuitCount": "Контуров по ведомости",
+    "sewageDailyFlow": "Суточный приток, м³/сут",
+    "sewageMinimumWorkingVolume": "Минимальный рабочий объём, м³",
+    "sewageSelectedWorkingVolume": "Рабочий объём выбранной системы, м³",
     "anchorsNeeded": "Анкеров нужно",
     "angleLength": "Длина угла",
     "antisepticNeeded": "Антисептика нужно",
@@ -3728,6 +3735,11 @@
       "noHydraulics": "Расчёт не проверяет теплоотдачу, температуру поверхности, потери давления, насос, балансировку или источник тепла",
       "coilCutPlan": "Общее число бухт не доказывает, что все непрерывные контуры можно выкроить без соединений в конструкции пола"
     },
+    "sewage": {
+      "preliminaryBoundary": "Предварительный режим использует явно введённый сток на ЭЧЖ; для точной проверки перенесите суточный приток из проекта",
+      "postTreatment": "Септик выполняет только предварительную механическую очистку; последующая очистка требует обоснованной проектной схемы",
+      "noSitingDesign": "Расчёт не назначает санитарные разрывы, конструкцию, уклон и отметки трассы, вентиляцию, защиту от всплытия или способ сброса"
+    },
     "foundation": {
       "gidroizolyatsiya_po_vsey_ploschadi": "Гидроизоляция по всей площади контакта с грунтом.",
       "uteplenie_naruzhnoe_epps_minimum": "Утепление наружное (ЭППС) минимум 100 мм.",
@@ -4570,6 +4582,40 @@
     "waterFloor.collectorCount": "Коллекторы по ведомости",
     "waterFloor.manifoldOutletCount": "Выходы коллекторов по ведомости",
     "waterFloor.manifoldOutletCount.hint": "Суммарное число выходов всех введённых коллекторов",
+    "sewage.calculationMode": "Исходные данные",
+    "sewage.calculationMode.hint": "Для точной проверки используйте расчётный суточный приток из проекта",
+    "sewage.calculationMode.preliminary": "Предварительно по ЭЧЖ",
+    "sewage.calculationMode.project": "По суточному притоку проекта",
+    "sewage.equivalentResidents": "Эквивалентное число жителей, ЭЧЖ",
+    "sewage.equivalentResidents.hint": "Нужно для коэффициента минимального объёма и проверки числа камер",
+    "sewage.wastewaterPerResidentL": "Расчётный сток на одного ЭЧЖ, л/сут",
+    "sewage.wastewaterPerResidentL.hint": "200 л/сут — стартовое значение, а не универсальная норма",
+    "sewage.projectDailyFlowM3": "Суточный приток по проекту, м³/сут",
+    "sewage.projectDailyFlowM3.hint": "Перенесите расчётный среднесуточный приток из проекта",
+    "sewage.selectedWorkingVolumeM3": "Рабочий объём выбранной системы",
+    "sewage.selectedWorkingVolumeM3.hint": "Укажите рабочий объём из проекта или паспорта; 0 — проверка отключена",
+    "sewage.selectedChamberCount": "Камер в выбранной системе",
+    "sewage.selectedChamberCount.hint": "Перенесите фактическое число камер из проекта или паспорта",
+    "sewage.chambers.unknown": "Не указано",
+    "sewage.chambers.one": "1 камера",
+    "sewage.chambers.two": "2 камеры",
+    "sewage.chambers.three": "3 камеры",
+    "sewage.naturalTreatmentStatus": "Последующая очистка стока",
+    "sewage.naturalTreatmentStatus.hint": "Септик — только предварительная механическая очистка; грунт нельзя оценить одним названием",
+    "sewage.status.unchecked": "Не проверено",
+    "sewage.treatment.confirmed": "Подтверждена проектом и изысканиями",
+    "sewage.treatment.engineered": "Нужно отдельное инженерное решение",
+    "sewage.groundwaterStatus": "Сезонный уровень грунтовых вод",
+    "sewage.groundwaterStatus.hint": "Используйте инженерно-геологические данные, а не состояние участка в день монтажа",
+    "sewage.groundwater.confirmed": "Учтён в проекте",
+    "sewage.groundwater.high": "Высокий или сезонно высокий",
+    "sewage.pipeLengthM": "Длина трубы по проектной трассе",
+    "sewage.pipeLengthM.hint": "Фактическая длина по плану и профилю; уклон и отметки здесь не рассчитываются",
+    "sewage.pipeSectionLengthM": "Длина товарного отрезка трубы",
+    "sewage.pipeSectionLengthM.hint": "0 — оставить результат в метрах; иначе округлить до целых отрезков",
+    "sewage.inspectionWellCount": "Смотровые колодцы по ведомости",
+    "sewage.fittingCount": "Фасонные части по ведомости",
+    "sewage.fittingCount.hint": "Суммарное проектное количество; типоразмеры сверяются отдельно",
     "ventilation.calculationMode": "Исходный расход воздуха",
     "ventilation.calculationMode.hint": "Жилой режим применим к помещениям с естественным проветриванием. Для других объектов используйте расход из проекта.",
     "ventilation.calculationMode.residential": "Предварительно для жилья",
@@ -5082,6 +5128,10 @@
     "water_floor_source": "Исходные данные",
     "water_floor_project": "Проверка контуров",
     "water_floor_purchase": "Закупка по ведомости",
+    "sewage_flow": "Суточный приток",
+    "sewage_system": "Проверка выбранной системы",
+    "sewage_site": "Условия участка",
+    "sewage_purchase": "Проектная ведомость",
     "sheet": "Листы",
     "application": "Применение",
     "material": "Материал",
@@ -5528,6 +5578,9 @@
       },
       "paving_tiles": {
         "title": "Тротуарная плитка"
+      },
+      "sewage": {
+        "title": "Септик"
       },
       "septic_rings": {
         "title": "Септик из колец"

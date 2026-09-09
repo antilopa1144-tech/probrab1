@@ -17,6 +17,7 @@ import 'stairs_calculator_v2.dart';
 import 'drywall_ceiling_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'warm_floor_pipes_calculator_v2.dart';
+import 'sewage_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'room_calculator_v2.dart';
 // bathroom_tile_calculator_v2.dart удалён - дублирует floors_tile (tile_calculator_v2.dart)
@@ -104,6 +105,7 @@ class CalculatorRegistry {
     // Инженерные системы
     warmFloorCalculatorV2,
     warmFloorPipesCalculatorV2,
+    sewageCalculatorV2,
 
     // Полы (дополнительные)
     parquetCalculatorV2,
@@ -171,7 +173,9 @@ class CalculatorRegistry {
     }
 
     // Вычисляем и кэшируем
-    final result = allCalculators.where((calc) => calc.category == category).toList();
+    final result = allCalculators
+        .where((calc) => calc.category == category)
+        .toList();
     _categoryCache[category] = result;
     return result;
   }
@@ -204,7 +208,9 @@ class CalculatorRegistry {
 
   /// Получить калькуляторы по сложности
   static List<CalculatorDefinitionV2> getByComplexity(int complexity) {
-    return allCalculators.where((calc) => calc.complexity == complexity).toList();
+    return allCalculators
+        .where((calc) => calc.complexity == complexity)
+        .toList();
   }
 
   /// Количество калькуляторов
@@ -254,10 +260,7 @@ class CalculatorRegistry {
       ...landscapeCalculators,
     ].where((c) => !skipIds.contains(c.id)).toList();
 
-    final all = <CalculatorDefinitionV2>[
-      ..._seedCalculators,
-      ...migrated,
-    ];
+    final all = <CalculatorDefinitionV2>[..._seedCalculators, ...migrated];
 
     return all
         .map(

@@ -1,7 +1,7 @@
 {
   "calculator_id": "paint",
   "formula_version": "paint-canonical-v2",
-  "generated_at": "2026-08-26T22:00:33.292Z",
+  "generated_at": "2026-09-09T00:21:52.320Z",
   "cases": [
     {
       "id": "defaults",
@@ -48,7 +48,7 @@
         "ceilingBaseExactNeedL": 4.6,
         "baseExactNeedL": 12.6,
         "ceilingPremiumFactor": 1.15,
-        "primerLiters": 6.6,
+        "primerLiters": 0,
         "tapeMeters": 39.356,
         "tapeRolls": 1,
         "minExactNeedL": 12.6,
@@ -58,10 +58,9 @@
         "recPurchaseL": 15,
         "maxPurchaseL": 15
       },
-      "expected_materials_count": 10,
+      "expected_materials_count": 9,
       "expected_material_names": [
         "Интерьерная краска (3 л)",
-        "Грунтовка глубокого проникновения (10 л)",
         "Шкурка наждачная P240 (для шлифовки между слоями)",
         "Валик малярный микрофибра 250 мм",
         "Кисть плоская 50 мм (для углов и откосов)",

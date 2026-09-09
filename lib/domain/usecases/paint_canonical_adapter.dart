@@ -541,10 +541,13 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   }
 
   final recScenario = scenarios['REC']!;
-  final primerLiters = roundValue(
-    area * spec.materialRule<num>('primer_l_per_m2').toDouble(),
-    3,
-  );
+  final needsPrimer = (preparation['id'] as num).toInt() == 1;
+  final primerLiters = needsPrimer
+      ? roundValue(
+          area * spec.materialRule<num>('primer_l_per_m2').toDouble(),
+          3,
+        )
+      : 0.0;
   final tapeMeters = roundValue(
     estimatedPerimeter *
         spec.materialRule<num>('tape_runs_per_room').toDouble() *
@@ -560,9 +563,10 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   if (area <= 0) {
     warnings.add('Площадь окраски должна быть больше нуля');
   }
-  if (spec
-      .warningRule<List>('primer_required_surface_ids')
-      .contains((surface['id'] as num).toInt())) {
+  if (needsPrimer &&
+      spec
+          .warningRule<List>('primer_required_surface_ids')
+          .contains((surface['id'] as num).toInt())) {
     warnings.add(
       'Для выбранной поверхности рекомендуется предварительное грунтование',
     );

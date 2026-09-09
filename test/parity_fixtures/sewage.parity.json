@@ -1,74 +1,79 @@
 {
   "calculator_id": "sewage",
-  "formula_version": "sewage-canonical-v1",
-  "generated_at": "2026-08-19T07:37:48.062Z",
+  "formula_version": "sewage-canonical-v2",
+  "generated_at": "2026-09-09T00:21:52.555Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for sewage",
       "inputs": {
-        "residents": 4,
-        "septikType": 0,
-        "chambersCount": 2,
-        "pipeLength": 10,
-        "groundType": 0
+        "calculationMode": 0,
+        "equivalentResidents": 4,
+        "wastewaterPerResidentL": 200,
+        "projectDailyFlowM3": 0.8,
+        "selectedWorkingVolumeM3": 0,
+        "selectedChamberCount": 0,
+        "naturalTreatmentStatus": 0,
+        "groundwaterStatus": 0,
+        "pipeLengthM": 0,
+        "pipeSectionLengthM": 0,
+        "inspectionWellCount": 0,
+        "fittingCount": 0
       },
       "expected_totals": {
-        "residents": 4,
-        "septikType": 0,
-        "chambersCount": 2,
-        "pipeLength": 10,
-        "groundType": 0,
-        "dailyVolumeLiters": 800,
-        "totalVolumeLiters": 2400,
-        "totalVolume": 2.4,
-        "volumePerChamber": 1.2,
-        "totalRings": 4,
-        "ringsPerChamber": 2,
-        "bottomPlates": 2,
-        "topPlates": 2,
-        "covers": 2,
-        "sealingRings": 4,
-        "septicCount": 0,
-        "sandBackfill": 0,
-        "eurocubes": 0,
-        "pipeSections": 4,
-        "elbows": 3,
-        "tees": 2,
-        "gravel": 0,
-        "geotextile": 0,
-        "minExactNeed": 3.7248,
-        "recExactNeed": 4.24,
-        "maxExactNeed": 5.51264,
-        "minPurchase": 4,
-        "recPurchase": 5,
-        "maxPurchase": 6
+        "calculationMode": 0,
+        "equivalentResidents": 4,
+        "wastewaterPerResidentL": 200,
+        "projectDailyFlowM3": 0.8,
+        "dailyFlowM3": 0.8,
+        "retentionMultiplier": 3,
+        "minimumWorkingVolumeM3": 2.4,
+        "selectedWorkingVolumeM3": 0,
+        "verifiedWorkingVolumeM3": 2.4,
+        "volumeShortfallM3": 0,
+        "volumeMarginM3": 0,
+        "minimumChamberCount": 1,
+        "selectedChamberCount": 0,
+        "naturalTreatmentStatus": 0,
+        "groundwaterStatus": 0,
+        "pipeLengthM": 0,
+        "pipeSectionLengthM": 0,
+        "pipeSections": 0,
+        "purchasePipeLengthM": 0,
+        "pipeLeftoverM": 0,
+        "inspectionWellCount": 0,
+        "fittingCount": 0,
+        "minExactNeed": 2.4,
+        "recExactNeed": 2.4,
+        "maxExactNeed": 2.4,
+        "minPurchase": 2.4,
+        "recPurchase": 2.4,
+        "maxPurchase": 2.4
       },
-      "expected_materials_count": 8,
-      "expected_material_names": [
-        "Железобетонные колодезные кольца, типоразмер КС 10-9",
-        "Плиты днища колодца, заводская маркировка ПН-10",
-        "Плиты перекрытия колодца, заводская маркировка ПП-10",
-        "Люки чугунные",
-        "Кольца уплотнительные",
-        "Пластиковая канализационная труба (ПВХ) Ø110 мм, отрезки по 3 м",
-        "Отводы (колена)",
-        "Тройники"
+      "expected_materials_count": 0,
+      "expected_material_names": [],
+      "expected_warnings_count": 7,
+      "expected_warnings": [
+        "Септик выполняет только предварительную механическую очистку: обработанный сток требует последующей очистки по обоснованной проектной схеме.",
+        "Калькулятор не назначает конструкцию сооружения, санитарные разрывы, уклон и отметки трассы, вентиляцию, защиту от всплытия или способ сброса.",
+        "Суточный объём на одного ЭЧЖ введён пользователем; стартовые 200 л/сут не заменяют расчёт фактического водоотведения.",
+        "Рабочий объём выбранной системы не введён — показан только минимальный расчётный объём.",
+        "Количество камер выбранной системы не введено и не проверено.",
+        "Пригодность грунта и схема последующей очистки не подтверждены изысканиями и проектом.",
+        "Расчётный сезонный уровень грунтовых вод не проверен."
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 3.7248,
-          "purchase_quantity": 4
+          "exact_need": 2.4,
+          "purchase_quantity": 2.4
         },
         "REC": {
-          "exact_need": 4.24,
-          "purchase_quantity": 5
+          "exact_need": 2.4,
+          "purchase_quantity": 2.4
         },
         "MAX": {
-          "exact_need": 5.51264,
-          "purchase_quantity": 6
+          "exact_need": 2.4,
+          "purchase_quantity": 2.4
         }
       }
     }
